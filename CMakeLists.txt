@@ -6,4 +6,4 @@ set(SDL_PATH "E:/Kits/SDL2")
 include_directories(${SDL_PATH}/include)
 link_directories(${SDL_PATH}/lib)
 
-add_executable(BounceBall main.cpp bounceball.cpp bounceball.h config.h resource.h BounceBall.rc)
+add_executable(BounceBall WIN32 main.cpp bounceball.cpp bounceball.h config.h resource.h BounceBall.rc)
