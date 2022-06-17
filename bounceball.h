@@ -7,8 +7,6 @@
 #include <Windows.h>
 #include <random>
 
-#include <stdio.h>
-
 #include "config.h"
 #include "resource.h"
 
