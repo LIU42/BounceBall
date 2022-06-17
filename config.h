@@ -1,0 +1,59 @@
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+#define TITLE "Bounce Ball"
+#define SCREEN_WIDTH 644
+#define SCREEN_HEIGHT 480
+#define GAME_FPS 60
+#define IMG_FORMAT SDL_PIXELFORMAT_RGBA32
+
+#define BACKGROUND_COLOR 0x161616
+#define TEXT_COLOR { 255, 255, 255 }
+
+#define TITLE_FONT_SIZE 35
+#define INFO_FONT_SIZE 15
+#define TEXT_RECT_WIDTH 90
+#define TEXT_RECT_HEIGHT 15
+#define TEXT_BORDER 5
+#define TEXT_MAX_LEN 30
+
+#define TITLE_POSITION 150
+#define INFO_POSITION 340
+#define SCORE_POSITION 250
+#define BEST_SCORE_POSITION 270
+
+#define MAIN_TITLE_LENGTH 210
+#define OVER_TITLE_LENGTH 175
+#define INFO_LENGTH 195
+#define SCORE_LENGTH 120
+
+#define TIMER_INTERVAL 1000
+#define ADD_BLOCK_INTERVAL 10000
+#define GAMEOVER_DELAY_DISTANCE 200
+
+#define START 0
+#define PLAYING 1
+#define PAUSE 2
+#define OVER 3
+#define WIN 4
+#define EXIT 5
+
+#define CATCH_SCORE 1
+#define HIT_SCORE 5
+#define LEVEL_UP_STEP 500
+
+#define PLANK_WIDTH 80
+#define PLANK_HEIGHT 8
+#define PLANK_POSITION 60
+
+#define BALL_INIT_MARGIN 100
+#define BALL_INIT_POSITION 408
+#define BALL_RADIUS 6
+#define BALL_INIT_SPEED 3
+
+#define WINDOW_BORDER_X 2
+#define WINDOW_BORDER_Y 3
+#define BLOCK_ROWS 32
+#define BLOCK_COLS 10
+#define BLOCK_SIZE 20
+#endif
