@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(BounceBall VERSION 0.1.0)
 
-set(SDL_PATH "E:/Kits/SDL2")
+set(SDL_PATH "E:/Library/SDL2")
 
 include_directories(${SDL_PATH}/include)
 link_directories(${SDL_PATH}/lib)
