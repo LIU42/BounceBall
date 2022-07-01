@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 {
     Uint32 startTick;
     Uint32 endTick;
-    Uint32 delayTick;
+    INT32 delayTick;
 
     window.init();
     window.loadImage();
@@ -28,10 +28,11 @@ int main(int argc, char* argv[])
         game.update();
         game.event();
         game.display();
-
+        
         endTick = SDL_GetTicks();
         delayTick = (1000 / GAME_FPS) - (endTick - startTick);
-        if (delayTick <= 1000 / GAME_FPS) { SDL_Delay(delayTick); }
+        
+        SDL_Delay((delayTick > 0) ? delayTick : 0);
     }
     window.close();
     return 0;
