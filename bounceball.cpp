@@ -25,7 +25,7 @@ void MainGame::initWindow()
     SDL_Init(SDL_INIT_EVERYTHING);
     hInstance = GetModuleHandle(0);
     window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    SDL_GetWindowSize(window, &screen.w, &screen.h);
 }
 
 void MainGame::initGame()
