@@ -2,7 +2,7 @@
 
 using namespace std;
 
-SDL_RWops* Window::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
+SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
 {
     HRSRC hRsrc = FindResource(hInst, name, type);
     DWORD size = SizeofResource(hInst, hRsrc);
@@ -10,85 +10,35 @@ SDL_RWops* Window::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
     return SDL_RWFromConstMem(data, size);
 }
 
-SDL_Surface* Window::loadSurface(DWORD ID)
+SDL_Surface* MainGame::loadSurface(WORD ID)
 {
     SDL_RWops* src = getResource(hInstance, MAKEINTRESOURCE(ID), TEXT("PNG"));
     SDL_Surface* originImage = IMG_LoadPNG_RW(src);
-    SDL_Surface* convertImage = SDL_ConvertSurface(originImage, format, NULL);
+    SDL_Surface* convertImage = SDL_ConvertSurface(originImage, image.format, NULL);
     SDL_FreeSurface(originImage);
     SDL_FreeRW(src);
     return convertImage;
 }
 
-void Window::text(const char* text, TTF_Font* font, int x, int y)
-{
-    SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, TEXT_COLOR);
-    SDL_Rect textRect = { x, y, TEXT_RECT_WIDTH, TEXT_RECT_HEIGHT };
-    SDL_BlitSurface(textSurface, NULL, surface, &textRect);
-    SDL_FreeSurface(textSurface);
-}
-
-void Window::init()
+void MainGame::initWindow()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     hInstance = GetModuleHandle(0);
     window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    surface = SDL_GetWindowSurface(window);
-    format = SDL_AllocFormat(IMG_FORMAT);
-    screenRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 }
 
-void Window::loadImage()
-{
-    plankImg = loadSurface(IDB_PNG1);
-    ballImg = loadSurface(IDB_PNG2);
-    blockImg = loadSurface(IDB_PNG3);
-}
-
-void Window::freeImage()
-{
-    SDL_FreeSurface(plankImg);
-    SDL_FreeSurface(ballImg);
-    SDL_FreeSurface(blockImg);
-}
-
-void Window::loadFont()
-{
-    TTF_Init();
-    titleFont = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), 1, TITLE_FONT_SIZE);
-    infoFont = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), 1, INFO_FONT_SIZE);
-}
-
-void Window::freeFont()
-{
-    TTF_CloseFont(titleFont);
-    TTF_CloseFont(infoFont);
-}
-
-void Window::close()
-{
-    SDL_DestroyWindow(window);
-    SDL_FreeFormat(format);
-    freeImage();
-    freeFont();
-    IMG_Quit();
-    TTF_Quit();
-    SDL_Quit();
-}
-
-Game::Game() : random(unsigned(time(NULL))), randX(BALL_INIT_MARGIN, SCREEN_WIDTH - BALL_INIT_MARGIN) { bestScore = 0; }
-
-void Game::init()
+void MainGame::initGame()
 {
     status = START;
     score = 0;
-    hitBlockCount = 0;
+    hitCount = 0;
     plank.init();
     ball.init();
     initBlock();
 }
 
-void Game::initBlock()
+void MainGame::initBlock()
 {
     for (int x = 0; x < BLOCK_ROWS; x++)
     {
@@ -99,23 +49,63 @@ void Game::initBlock()
     }
 }
 
-void Game::levelUp() { ball.speed = BALL_INIT_SPEED + score / LEVEL_UP_STEP; }
+void MainGame::loadImage()
+{
+    image.format = SDL_AllocFormat(IMG_FORMAT);
+    image.surface = SDL_GetWindowSurface(window);
+    image.plank = loadSurface(IDB_PNG1);
+    image.ball = loadSurface(IDB_PNG2);
+    image.block = loadSurface(IDB_PNG3);
+}
 
-void Game::gameover()
+void MainGame::freeImage()
+{
+    SDL_FreeFormat(image.format);
+    SDL_FreeSurface(image.plank);
+    SDL_FreeSurface(image.ball);
+    SDL_FreeSurface(image.block);
+}
+
+void MainGame::loadFont()
+{
+    TTF_Init();
+    font.title = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), 1, TITLE_FONT_SIZE);
+    font.info = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), 1, INFO_FONT_SIZE);
+}
+
+void MainGame::freeFont()
+{
+    TTF_CloseFont(font.title);
+    TTF_CloseFont(font.info);
+}
+
+void MainGame::close()
+{
+    SDL_DestroyWindow(window);
+    freeImage();
+    freeFont();
+    IMG_Quit();
+    TTF_Quit();
+    SDL_Quit();
+}
+
+void MainGame::levelUp() { ball.speed = BALL_INIT_SPEED + score / LEVEL_UP_STEP; }
+
+void MainGame::gameover()
 {
     if (ball.rect.y >= SCREEN_HEIGHT + GAMEOVER_DELAY_DISTANCE)
     {
         if (score > bestScore) { bestScore = score; }
         status = OVER;
     }
-    else if (hitBlockCount == BLOCK_ROWS * BLOCK_COLS)
+    else if (hitCount == BLOCK_ROWS * BLOCK_COLS)
     {
         if (score > bestScore) { bestScore = score; }
         status = WIN;
     }
 }
 
-void Game::update()
+void MainGame::update()
 {
     if (status == PLAYING)
     {
@@ -128,26 +118,34 @@ void Game::update()
     }
 }
 
-void Game::event()
+void MainGame::events()
 {
-    while (SDL_PollEvent(&window.event))
+    while (SDL_PollEvent(&event))
     {
-        if (window.event.type == SDL_QUIT) { game.status = EXIT; }
-        if (window.event.type == SDL_MOUSEBUTTONDOWN)
+        if (event.type == SDL_QUIT) { status = EXIT; }
+        if (event.type == SDL_MOUSEBUTTONDOWN)
         {
             switch (status)
             {
                 case START: status = PLAYING; break;
                 case PAUSE: status = PLAYING; break;
-                case WIN: case OVER: init(); status = PLAYING; break;
+                case WIN: case OVER: initGame(); status = PLAYING; break;
             }
         }
-        if (window.event.type == SDL_MOUSEMOTION && status == PLAYING) { plank.move(window.event.motion.x); }
-        if (window.event.type == SDL_KEYDOWN && window.event.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
+        if (event.type == SDL_MOUSEMOTION && status == PLAYING) { plank.move(event.motion.x); }
+        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
     }
 }
 
-void Game::displayImage()
+void MainGame::displayText(char* text, TTF_Font* font, int x, int y)
+{
+    SDL_Surface* surface = TTF_RenderText_Blended(font, text, TEXT_COLOR);
+    SDL_Rect rect = { x, y, TEXT_RECT_WIDTH, TEXT_RECT_HEIGHT };
+    SDL_BlitSurface(surface, NULL, image.surface, &rect);
+    SDL_FreeSurface(surface);
+}
+
+void MainGame::displayImage()
 {
     if (status == PLAYING || status == PAUSE)
     {
@@ -163,18 +161,20 @@ void Game::displayImage()
     }
 }
 
-void Game::displayInfo()
+void MainGame::displayInfo()
 {
+    static char text[TEXT_MAX_LEN];
+
     if (status == START)
     {
-        window.text("BOUNCE BALL", window.titleFont, (SCREEN_WIDTH - MAIN_TITLE_LENGTH) / 2, TITLE_POSITION);
-        window.text("Click anywhere to START...", window.infoFont, (SCREEN_WIDTH - INFO_LENGTH) / 2, INFO_POSITION);
+        displayText("BOUNCE BALL", font.title, (SCREEN_WIDTH - MAIN_TITLE_LENGTH) / 2, TITLE_POSITION);
+        displayText("Click anywhere to START...", font.info, (SCREEN_WIDTH - INFO_LENGTH) / 2, INFO_POSITION);
     }
     else if (status == PLAYING || status == PAUSE)
     {
         SDL_snprintf(text, TEXT_MAX_LEN, "Score: %d", score);
-        window.text(text, window.infoFont, SCREEN_WIDTH - TEXT_BORDER - TEXT_RECT_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER);
-        if (status == PAUSE) { window.text("PAUSE", window.infoFont, TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER); }
+        displayText(text, font.info, SCREEN_WIDTH - TEXT_BORDER - TEXT_RECT_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER);
+        if (status == PAUSE) { displayText("PAUSE", font.info, TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER); }
     }
     else if (status == OVER || status == WIN)
     {
@@ -183,44 +183,44 @@ void Game::displayInfo()
             case OVER: SDL_snprintf(text, TEXT_MAX_LEN, "GAMEOVER!"); break;
             case WIN: SDL_snprintf(text, TEXT_MAX_LEN, "YOU WIN!"); break;
         }
-        window.text(text, window.titleFont, (SCREEN_WIDTH - OVER_TITLE_LENGTH) / 2, TITLE_POSITION);
+        displayText(text, font.title, (SCREEN_WIDTH - OVER_TITLE_LENGTH) / 2, TITLE_POSITION);
         SDL_snprintf(text, TEXT_MAX_LEN, "Your score: %d", score);
-        window.text(text, window.infoFont, (SCREEN_WIDTH - SCORE_LENGTH) / 2, SCORE_POSITION);
+        displayText(text, font.info, (SCREEN_WIDTH - SCORE_LENGTH) / 2, SCORE_POSITION);
         SDL_snprintf(text, TEXT_MAX_LEN, "Best score: %d", bestScore);
-        window.text(text, window.infoFont, (SCREEN_WIDTH - SCORE_LENGTH) / 2, BEST_SCORE_POSITION);
-        window.text("Click anywhere to RESTART...", window.infoFont, (SCREEN_WIDTH - INFO_LENGTH) / 2, INFO_POSITION);
+        displayText(text, font.info, (SCREEN_WIDTH - SCORE_LENGTH) / 2, BEST_SCORE_POSITION);
+        displayText("Click anywhere to RESTART...", font.info, (SCREEN_WIDTH - INFO_LENGTH) / 2, INFO_POSITION);
     }
 }
 
-void Game::display()
+void MainGame::display()
 {
-    SDL_FillRect(window.surface, &window.screenRect, BACKGROUND_COLOR);
+    SDL_FillRect(image.surface, &screen, BACKGROUND_COLOR);
     displayImage();
     displayInfo();
-    SDL_UpdateWindowSurface(window.window);
+    SDL_UpdateWindowSurface(window);
 }
 
 void Plank::init() { rect = { (SCREEN_WIDTH - PLANK_WIDTH) / 2, SCREEN_HEIGHT - PLANK_POSITION, PLANK_WIDTH, PLANK_HEIGHT }; }
 
 void Plank::move(int mouseX)
 {
-    if (mouseX > PLANK_WIDTH / 2 && mouseX < SCREEN_WIDTH - PLANK_WIDTH / 2) { plank.rect.x = mouseX - PLANK_WIDTH / 2; }
-    else if (mouseX <= PLANK_WIDTH / 2) { plank.rect.x = 0; }
-    else if (mouseX >= SCREEN_WIDTH - PLANK_WIDTH / 2) { plank.rect.x = SCREEN_WIDTH - PLANK_WIDTH; }
+    if (mouseX > PLANK_WIDTH / 2 && mouseX < SCREEN_WIDTH - PLANK_WIDTH / 2) { rect.x = mouseX - PLANK_WIDTH / 2; }
+    else if (mouseX <= PLANK_WIDTH / 2) { rect.x = 0; }
+    else if (mouseX >= SCREEN_WIDTH - PLANK_WIDTH / 2) { rect.x = SCREEN_WIDTH - PLANK_WIDTH; }
 }
 
-void Plank::display() { SDL_BlitSurface(window.plankImg, NULL, window.surface, &rect); }
+void Plank::display() { SDL_BlitSurface(game.image.plank, NULL, game.image.surface, &rect); }
 
 void Ball::init()
 {
-    switch (game.randSign(game.random))
+    switch (rand() % 2)
     {
         case 1: signX = 1; break;
         case 0: signX = -1; break;
     }
     signY = -1;
     speed = BALL_INIT_SPEED;
-    rect = { game.randX(game.random), BALL_INIT_POSITION, BALL_RADIUS * 2, BALL_RADIUS * 2 };
+    rect = { rand() % (SCREEN_HEIGHT - 2 * BALL_INIT_MARGIN) + BALL_INIT_MARGIN, BALL_INIT_POSITION, BALL_RADIUS * 2, BALL_RADIUS * 2 };
 }
 
 void Ball::move()
@@ -233,7 +233,7 @@ void Ball::reflectOnPlank()
 {
     if (rect.y >= BALL_INIT_POSITION && rect.y < BALL_INIT_POSITION + speed)
     {
-        if (rect.x >= plank.rect.x - BALL_RADIUS - speed && rect.x <= plank.rect.x + PLANK_WIDTH + speed - BALL_RADIUS)
+        if (rect.x >= game.plank.rect.x - BALL_RADIUS - speed && rect.x <= game.plank.rect.x + PLANK_WIDTH + speed - BALL_RADIUS)
         {
             signY = -signY;
             game.score += CATCH_SCORE;
@@ -256,10 +256,10 @@ void Ball::reflectOnBlock()
     {
         for (int y = 0; y < BLOCK_COLS; y++)
         {
-            if (block[x][y].alive)
+            if (game.block[x][y].alive)
             {
-                int distanceX = (rect.x + int(BALL_RADIUS)) - (block[x][y].rect.x + int(BLOCK_SIZE) / 2);
-                int distanceY = (rect.y + int(BALL_RADIUS)) - (block[x][y].rect.y + int(BLOCK_SIZE) / 2);
+                int distanceX = (rect.x + int(BALL_RADIUS)) - (game.block[x][y].rect.x + int(BLOCK_SIZE) / 2);
+                int distanceY = (rect.y + int(BALL_RADIUS)) - (game.block[x][y].rect.y + int(BLOCK_SIZE) / 2);
 
                 int absDistanceX = SDL_abs(distanceX);
                 int absDistanceY = SDL_abs(distanceY);
@@ -275,16 +275,16 @@ void Ball::reflectOnBlock()
                     else if (absDistanceX < absDistanceY && !isReflectY) { signY = -signY; isReflectY = true; }
                     else if (absDistanceX > absDistanceY && !isReflectX) { signX = -signX; isReflectX = true; }
 
-                    block[x][y].alive = false;
+                    game.block[x][y].alive = false;
                     game.score += HIT_SCORE;
-                    game.hitBlockCount += 1;
+                    game.hitCount += 1;
                 }
             }
         }
     }
 }
 
-void Ball::display() { SDL_BlitSurface(window.ballImg, NULL, window.surface, &rect); }
+void Ball::display() { SDL_BlitSurface(game.image.ball, NULL, game.image.surface, &rect); }
 
 void Block::init(int x, int y)
 {
@@ -292,4 +292,4 @@ void Block::init(int x, int y)
     alive = true;
 }
 
-void Block::display() { if (alive) { SDL_BlitSurface(window.blockImg, NULL, window.surface, &rect); } }
+void Block::display() { if (alive) { SDL_BlitSurface(game.image.block, NULL, game.image.surface, &rect); } }

@@ -5,69 +5,25 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <Windows.h>
-#include <random>
 
 #include "config.h"
 #include "resource.h"
 
 using namespace std;
 
-class Window
+struct Image
 {
-    public:
-        HINSTANCE hInstance;
-        SDL_Window* window;
-        SDL_Surface* surface;
-        SDL_Rect screenRect;
-        SDL_Event event;
-        TTF_Font* titleFont;
-        TTF_Font* infoFont;
-        SDL_PixelFormat* format;
-
-    public:
-        SDL_Surface* plankImg;
-        SDL_Surface* ballImg;
-        SDL_Surface* blockImg;
-
-    public:
-        SDL_RWops* getResource(HINSTANCE, LPCSTR, LPCSTR);
-        SDL_Surface* loadSurface(DWORD);
-
-    public:
-        void text(const char*, TTF_Font*, int, int);
-        void init();
-        void loadImage();
-        void loadFont();
-        void freeImage();
-        void freeFont();
-        void close();
+    SDL_PixelFormat* format;
+    SDL_Surface* surface;
+    SDL_Surface* plank;
+    SDL_Surface* ball;
+    SDL_Surface* block;
 };
 
-class Game
+struct Font
 {
-    public:
-        int status;
-        int score;
-        int bestScore;
-        int hitBlockCount;
-        char text[TEXT_MAX_LEN];
-
-    public:
-        default_random_engine random;
-        bernoulli_distribution randSign;
-        uniform_int_distribution <int> randX;
-
-    public:
-        Game();
-        void init();
-        void initBlock();
-        void levelUp();
-        void gameover();
-        void update();
-        void event();
-        void displayImage();
-        void displayInfo();
-        void display();
+    TTF_Font* title;
+    TTF_Font* info;
 };
 
 class Plank
@@ -109,9 +65,53 @@ class Block
         void display();
 };
 
-extern Window window;
-extern Game game;
-extern Ball ball;
-extern Plank plank;
-extern Block block[BLOCK_ROWS][BLOCK_COLS];
+class MainGame
+{
+    public:
+        HINSTANCE hInstance;
+        SDL_Window* window;
+        SDL_Rect screen;
+        SDL_Event event;
+
+    public:
+        Image image;
+        Font font;
+
+    public:
+        Ball ball;
+        Plank plank;
+        Block block[BLOCK_ROWS][BLOCK_COLS];
+
+    public:
+        int status;
+        int score;
+        int bestScore;
+        int hitCount;
+
+    public:
+        SDL_RWops* getResource(HINSTANCE, LPCSTR, LPCSTR);
+        SDL_Surface* loadSurface(WORD);
+
+    public:
+        void initWindow();
+        void initGame();
+        void initBlock();
+        void loadImage();
+        void loadFont();
+        void freeImage();
+        void freeFont();
+        void close();
+
+    public:
+        void levelUp();
+        void gameover();
+        void update();
+        void events();
+        void displayText(char*, TTF_Font*, int, int);
+        void displayImage();
+        void displayInfo();
+        void display();
+};
+
+extern MainGame game;
 #endif
