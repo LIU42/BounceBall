@@ -10,7 +10,7 @@ SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
     return SDL_RWFromConstMem(data, size);
 }
 
-SDL_Surface* MainGame::loadSurface(WORD ID)
+SDL_Surface* MainGame::loadSurface(DWORD ID)
 {
     SDL_RWops* src = getResource(hInstance, MAKEINTRESOURCE(ID), TEXT("PNG"));
     SDL_Surface* originImage = IMG_LoadPNG_RW(src);
@@ -30,6 +30,7 @@ void MainGame::initWindow()
 
 void MainGame::initGame()
 {
+    srand((unsigned)time(NULL));
     status = START;
     score = 0;
     hitCount = 0;

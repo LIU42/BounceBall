@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <Windows.h>
+#include <time.h>
 
 #include "config.h"
 #include "resource.h"
@@ -90,7 +91,7 @@ class MainGame
 
     public:
         SDL_RWops* getResource(HINSTANCE, LPCSTR, LPCSTR);
-        SDL_Surface* loadSurface(WORD);
+        SDL_Surface* loadSurface(DWORD);
 
     public:
         void initWindow();
