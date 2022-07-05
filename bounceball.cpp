@@ -13,11 +13,11 @@ SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
 SDL_Surface* MainGame::loadSurface(int id)
 {
     SDL_RWops* src = getResource(hInstance, MAKEINTRESOURCE(id), TEXT("PNG"));
-    SDL_Surface* originImage = IMG_LoadPNG_RW(src);
-    SDL_Surface* convertImage = SDL_ConvertSurface(originImage, image.format, NULL);
-    SDL_FreeSurface(originImage);
+    SDL_Surface* originSurface = IMG_LoadPNG_RW(src);
+    SDL_Surface* convertSurface = SDL_ConvertSurface(originSurface, image.format, NULL);
+    SDL_FreeSurface(originSurface);
     SDL_FreeRW(src);
-    return convertImage;
+    return convertSurface;
 }
 
 void MainGame::initWindow()
