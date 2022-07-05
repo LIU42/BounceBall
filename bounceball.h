@@ -108,7 +108,7 @@ class MainGame
         void gameover();
         void update();
         void control();
-        void displayText(char*, TTF_Font*, int, int);
+        void displayText(const char*, TTF_Font*, int, int);
         void displayImage();
         void displayInfo();
         void display();

@@ -138,7 +138,7 @@ void MainGame::control()
     }
 }
 
-void MainGame::displayText(char* text, TTF_Font* font, int x, int y)
+void MainGame::displayText(const char* text, TTF_Font* font, int x, int y)
 {
     SDL_Surface* surface = TTF_RenderText_Blended(font, text, TEXT_COLOR);
     SDL_Rect rect = { x, y, TEXT_RECT_WIDTH, TEXT_RECT_HEIGHT };
