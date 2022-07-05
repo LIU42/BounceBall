@@ -10,9 +10,9 @@ SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
     return SDL_RWFromConstMem(data, size);
 }
 
-SDL_Surface* MainGame::loadSurface(DWORD ID)
+SDL_Surface* MainGame::loadSurface(int id)
 {
-    SDL_RWops* src = getResource(hInstance, MAKEINTRESOURCE(ID), TEXT("PNG"));
+    SDL_RWops* src = getResource(hInstance, MAKEINTRESOURCE(id), TEXT("PNG"));
     SDL_Surface* originImage = IMG_LoadPNG_RW(src);
     SDL_Surface* convertImage = SDL_ConvertSurface(originImage, image.format, NULL);
     SDL_FreeSurface(originImage);
@@ -119,12 +119,12 @@ void MainGame::update()
     }
 }
 
-void MainGame::events()
+void MainGame::control()
 {
-    while (SDL_PollEvent(&event))
+    while (SDL_PollEvent(&events))
     {
-        if (event.type == SDL_QUIT) { status = EXIT; }
-        if (event.type == SDL_MOUSEBUTTONDOWN)
+        if (events.type == SDL_QUIT) { status = EXIT; }
+        if (events.type == SDL_MOUSEBUTTONDOWN)
         {
             switch (status)
             {
@@ -133,8 +133,8 @@ void MainGame::events()
                 case WIN: case OVER: initGame(); status = PLAYING; break;
             }
         }
-        if (event.type == SDL_MOUSEMOTION && status == PLAYING) { plank.move(event.motion.x); }
-        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
+        if (events.type == SDL_MOUSEMOTION && status == PLAYING) { plank.move(events.motion.x); }
+        if (events.type == SDL_KEYDOWN && events.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
     }
 }
 

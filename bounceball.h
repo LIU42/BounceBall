@@ -72,7 +72,7 @@ class MainGame
         HINSTANCE hInstance;
         SDL_Window* window;
         SDL_Rect screen;
-        SDL_Event event;
+        SDL_Event events;
 
     public:
         Image image;
@@ -91,7 +91,7 @@ class MainGame
 
     public:
         SDL_RWops* getResource(HINSTANCE, LPCSTR, LPCSTR);
-        SDL_Surface* loadSurface(DWORD);
+        SDL_Surface* loadSurface(int);
 
     public:
         void initWindow();
@@ -107,7 +107,7 @@ class MainGame
         void levelUp();
         void gameover();
         void update();
-        void events();
+        void control();
         void displayText(char*, TTF_Font*, int, int);
         void displayImage();
         void displayInfo();

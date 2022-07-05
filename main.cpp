@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
         startTick = SDL_GetTicks();
 
         game.update();
-        game.events();
+        game.control();
         game.display();
         
         endTick = SDL_GetTicks();
