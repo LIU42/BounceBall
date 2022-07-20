@@ -6,9 +6,11 @@ MainGame game;
 
 int main(int argc, char* argv[])
 {
-    Uint32 startTick;
-    Uint32 endTick;
-    INT32 delayTick;
+    int startTick;
+    int endTick;
+    int delayTick;
+
+    srand((unsigned)time(NULL));
 
     game.initWindow();
     game.initGame();

@@ -30,7 +30,6 @@ void MainGame::initWindow()
 
 void MainGame::initGame()
 {
-    srand((unsigned)time(NULL));
     status = START;
     score = 0;
     hitCount = 0;
