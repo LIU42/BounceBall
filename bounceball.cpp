@@ -1,7 +1,5 @@
 #include "bounceball.h"
 
-using namespace std;
-
 SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
 {
     HRSRC hRsrc = FindResource(hInst, name, type);

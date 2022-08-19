@@ -1,7 +1,5 @@
 #include "bounceball.h"
 
-using namespace std;
-
 MainGame game;
 
 int main(int argc, char* argv[])
