@@ -78,7 +78,7 @@ class MainGame
         HINSTANCE hInstance;
         SDL_Window* window;
         SDL_Rect screen;
-        SDL_Event events;
+        SDL_Event event;
 
     public:
         Image image;
@@ -113,7 +113,7 @@ class MainGame
         void levelUp();
         void gameover();
         void update();
-        void control();
+        void events();
         void displayText(const char*, Point, TTF_Font*);
         void displayImage();
         void displayInfo();

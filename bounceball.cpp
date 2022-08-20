@@ -38,15 +38,15 @@ void MainGame::initGame()
 
 void MainGame::initBlock()
 {
-    static Point point;
+    static Point pos;
 
     for (int x = 0; x < BLOCK_ROWS; x++)
     {
         for (int y = 0; y < BLOCK_COLS; y++)
         {
-            point.x = x * BLOCK_SIZE + WINDOW_BORDER_X;
-            point.y = y * BLOCK_SIZE + WINDOW_BORDER_Y;
-            block[x][y].init(point);
+            pos.x = x * BLOCK_SIZE + WINDOW_BORDER_X;
+            pos.y = y * BLOCK_SIZE + WINDOW_BORDER_Y;
+            block[x][y].init(pos);
         }
     }
 }
@@ -123,12 +123,12 @@ void MainGame::update()
     }
 }
 
-void MainGame::control()
+void MainGame::events()
 {
-    while (SDL_PollEvent(&events))
+    while (SDL_PollEvent(&event))
     {
-        if (events.type == SDL_QUIT) { status = EXIT; }
-        if (events.type == SDL_MOUSEBUTTONDOWN)
+        if (event.type == SDL_QUIT) { status = EXIT; }
+        if (event.type == SDL_MOUSEBUTTONDOWN)
         {
             switch (status)
             {
@@ -137,19 +137,19 @@ void MainGame::control()
                 case WIN: case OVER: initGame(); status = PLAYING; break;
             }
         }
-        if (events.type == SDL_MOUSEMOTION && status == PLAYING) { plank.move(events.motion.x); }
-        if (events.type == SDL_KEYDOWN && events.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
+        if (event.type == SDL_MOUSEMOTION && status == PLAYING) { plank.move(event.motion.x); }
+        if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
     }
 }
 
-void MainGame::displayText(const char* text, Point point, TTF_Font* font)
+void MainGame::displayText(const char* text, Point pos, TTF_Font* font)
 {
     static SDL_Surface* textSurface;
     static SDL_Rect textRect;
 
     textSurface = TTF_RenderText_Blended(font, text, TEXT_COLOR);
-    textRect.x = point.x;
-    textRect.y = point.y;
+    textRect.x = pos.x;
+    textRect.y = pos.y;
 
     SDL_BlitSurface(textSurface, NULL, image.surface, &textRect);
     SDL_FreeSurface(textSurface);
@@ -308,9 +308,9 @@ void Ball::display()
     SDL_BlitSurface(game.image.ball, NULL, game.image.surface, &rect);
 }
 
-void Block::init(Point point)
+void Block::init(Point pos)
 {
-    rect = { point.x, point.y, BLOCK_SIZE, BLOCK_SIZE };
+    rect = { pos.x, pos.y, BLOCK_SIZE, BLOCK_SIZE };
     alive = true;
 }
 
