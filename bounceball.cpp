@@ -38,11 +38,15 @@ void MainGame::initGame()
 
 void MainGame::initBlock()
 {
+    static Point point;
+
     for (int x = 0; x < BLOCK_ROWS; x++)
     {
         for (int y = 0; y < BLOCK_COLS; y++)
         {
-            block[x][y].init(x * BLOCK_SIZE + WINDOW_BORDER_X, y * BLOCK_SIZE + WINDOW_BORDER_Y);
+            point.x = x * BLOCK_SIZE + WINDOW_BORDER_X;
+            point.y = y * BLOCK_SIZE + WINDOW_BORDER_Y;
+            block[x][y].init(point);
         }
     }
 }
@@ -90,7 +94,7 @@ void MainGame::close()
 void MainGame::levelUp()
 {
     ball.speed = BALL_INIT_SPEED + score / LEVEL_UP_STEP;
-    }
+}
 
 void MainGame::gameover()
 {
@@ -138,14 +142,14 @@ void MainGame::control()
     }
 }
 
-void MainGame::displayText(const char* text, TTF_Font* font, int x, int y)
+void MainGame::displayText(const char* text, Point point, TTF_Font* font)
 {
     static SDL_Surface* textSurface;
     static SDL_Rect textRect;
 
     textSurface = TTF_RenderText_Blended(font, text, TEXT_COLOR);
-    textRect.x = x;
-    textRect.y = y;
+    textRect.x = point.x;
+    textRect.y = point.y;
 
     SDL_BlitSurface(textSurface, NULL, image.surface, &textRect);
     SDL_FreeSurface(textSurface);
@@ -176,14 +180,14 @@ void MainGame::displayInfo()
 
     if (status == START)
     {
-        displayText("BOUNCE BALL", font.title, (SCREEN_WIDTH - MAIN_TITLE_WIDTH) / 2, TITLE_POSITION);
-        displayText("Click anywhere to START...", font.info, (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_POSITION);
+        displayText("BOUNCE BALL", { (SCREEN_WIDTH - MAIN_TITLE_WIDTH) / 2, TITLE_POSITION }, font.title);
+        displayText("Click anywhere to START...", { (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_POSITION }, font.info);
     }
     else if (status == PLAYING || status == PAUSE)
     {
         SDL_snprintf(text, TEXT_MAX_LEN, "Score: %d", score);
-        displayText(text, font.info, SCREEN_WIDTH - TEXT_BORDER - PLAYING_SCORE_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER);
-        if (status == PAUSE) { displayText("PAUSE", font.info, TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER); }
+        displayText(text, { SCREEN_WIDTH - TEXT_BORDER - PLAYING_SCORE_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER }, font.info);
+        if (status == PAUSE) { displayText("PAUSE", { TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER }, font.info); }
     }
     else if (status == OVER || status == WIN)
     {
@@ -192,12 +196,12 @@ void MainGame::displayInfo()
             case OVER: SDL_snprintf(text, TEXT_MAX_LEN, "GAMEOVER!"); break;
             case WIN: SDL_snprintf(text, TEXT_MAX_LEN, "YOU WIN!"); break;
         }
-        displayText(text, font.title, (SCREEN_WIDTH - OVER_TITLE_WIDTH) / 2, TITLE_POSITION);
+        displayText(text, { (SCREEN_WIDTH - OVER_TITLE_WIDTH) / 2, TITLE_POSITION }, font.title);
         SDL_snprintf(text, TEXT_MAX_LEN, "Your score: %d", score);
-        displayText(text, font.info, (SCREEN_WIDTH - SCORE_WIDTH) / 2, SCORE_POSITION);
+        displayText(text, { (SCREEN_WIDTH - SCORE_WIDTH) / 2, SCORE_POSITION }, font.info);
         SDL_snprintf(text, TEXT_MAX_LEN, "Best score: %d", bestScore);
-        displayText(text, font.info, (SCREEN_WIDTH - SCORE_WIDTH) / 2, BEST_SCORE_POSITION);
-        displayText("Click anywhere to RESTART...", font.info, (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_POSITION);
+        displayText(text, { (SCREEN_WIDTH - SCORE_WIDTH) / 2, BEST_SCORE_POSITION }, font.info);
+        displayText("Click anywhere to RESTART...", { (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_POSITION }, font.info);
     }
 }
 
@@ -304,9 +308,9 @@ void Ball::display()
     SDL_BlitSurface(game.image.ball, NULL, game.image.surface, &rect);
 }
 
-void Block::init(int x, int y)
+void Block::init(Point point)
 {
-    rect = { x, y, BLOCK_SIZE, BLOCK_SIZE };
+    rect = { point.x, point.y, BLOCK_SIZE, BLOCK_SIZE };
     alive = true;
 }
 

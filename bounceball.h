@@ -12,6 +12,12 @@
 
 using namespace std;
 
+struct Point
+{
+    int x;
+    int y;
+};
+
 struct Image
 {
     SDL_PixelFormat* format;
@@ -62,7 +68,7 @@ class Block
         bool alive;
     
     public:
-        void init(int, int);
+        void init(Point);
         void display();
 };
 
@@ -108,7 +114,7 @@ class MainGame
         void gameover();
         void update();
         void control();
-        void displayText(const char*, TTF_Font*, int, int);
+        void displayText(const char*, Point, TTF_Font*);
         void displayImage();
         void displayInfo();
         void display();
