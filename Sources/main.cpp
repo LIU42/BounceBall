@@ -1,9 +1,9 @@
 #include "bounceball.h"
 
-MainGame game;
-
 int main(int argc, char* argv[])
 {
+    MainGame game;
+
     int startTick;
     int endTick;
     int delayTick;
@@ -12,11 +12,10 @@ int main(int argc, char* argv[])
 
     game.initWindow();
     game.initGame();
-    game.initBlock();
     game.loadImage();
     game.loadFont();
 
-    while (game.status != EXIT)
+    while (game.isRunning())
     {
         startTick = SDL_GetTicks();
 
@@ -25,7 +24,7 @@ int main(int argc, char* argv[])
         game.display();
         
         endTick = SDL_GetTicks();
-        delayTick = (1000 / GAME_FPS) - (endTick - startTick);
+        delayTick = (1000 / game.FPS) - (endTick - startTick);
         
         SDL_Delay(SDL_max(delayTick, 0));
     }

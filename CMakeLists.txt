@@ -9,12 +9,12 @@ link_directories(${SDL_PATH}/lib)
 add_executable(
     BounceBall
     WIN32
-    BounceBall.rc
-    main.cpp
-    bounceball.cpp
-    bounceball.h
-    config.h
-    resource.h
+    Sources/main.cpp
+    Sources/bounceball.cpp
+    Sources/ball.cpp
+    Sources/block.cpp
+    Sources/plank.cpp
+    Sources/resources.rc
 )
 
 target_link_libraries(
