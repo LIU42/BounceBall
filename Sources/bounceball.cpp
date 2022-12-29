@@ -261,9 +261,12 @@ void MainGame::displayInfo()
     }
     else if (status == PLAYING || status == PAUSE)
     {
+        if (status == PAUSE)
+        {
+            displayText("PAUSE", TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, font.info);
+        }
         SDL_snprintf(text, TEXT_LENGTH, "Score: %d", score);
         displayText(text, SCREEN_WIDTH - TEXT_BORDER - DURING_SCORE_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, font.info);
-        if (status == PAUSE) { displayText("PAUSE", TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, font.info); }
     }
     else if (status == OVER || status == WIN)
     {
