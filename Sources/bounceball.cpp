@@ -66,8 +66,8 @@ void MainGame::freeImage()
 void MainGame::loadFont()
 {
     TTF_Init();
-    font.title = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), 1, TITLE_FONT_SIZE);
-    font.info = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), 1, INFO_FONT_SIZE);
+    font.title = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, TITLE_FONT_SIZE);
+    font.info = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, INFO_FONT_SIZE);
 }
 
 void MainGame::freeFont()
@@ -229,15 +229,15 @@ void MainGame::events()
 
 void MainGame::displayText(const char* text, int x, int y, TTF_Font* font)
 {
-    static SDL_Surface* textSurface;
-    static SDL_Rect textRect;
+    static SDL_Surface* surface;
+    static SDL_Rect rect;
 
-    textSurface = TTF_RenderText_Blended(font, text, { 255, 255, 255 });
-    textRect.x = x;
-    textRect.y = y;
+    surface = TTF_RenderText_Blended(font, text, { 255, 255, 255 });
+    rect.x = x;
+    rect.y = y;
 
-    SDL_BlitSurface(textSurface, NULL, image.surface, &textRect);
-    SDL_FreeSurface(textSurface);
+    SDL_BlitSurface(surface, NULL, image.surface, &rect);
+    SDL_FreeSurface(surface);
 }
 
 void MainGame::displayImage()

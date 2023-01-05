@@ -6,21 +6,14 @@ set(SDL_PATH "D:/SDL2")
 include_directories(${SDL_PATH}/include)
 link_directories(${SDL_PATH}/lib)
 
-add_executable(
-    BounceBall
-    WIN32
-    Sources/main.cpp
-    Sources/bounceball.cpp
-    Sources/ball.cpp
-    Sources/block.cpp
-    Sources/plank.cpp
-    Sources/resources.rc
+file(GLOB_RECURSE SOURCES_FILES 
+    ${PROJECT_SOURCE_DIR}/Sources/*.cpp
+    ${PROJECT_SOURCE_DIR}/Sources/*.rc
 )
 
-target_link_libraries(
-    BounceBall
-    SDL2.lib
-    SDL2main.lib
-    SDL2_image.lib
-    SDL2_ttf.lib
+file(GLOB_RECURSE LIBRARY_FILES
+    ${SDL_PATH}/lib/*.lib
 )
+
+add_executable(BounceBall WIN32 ${SOURCES_FILES})
+target_link_libraries(BounceBall ${LIBRARY_FILES})
