@@ -2,10 +2,12 @@
 #define __BOUNCEBALL_H__
 
 #include <SDL.h>
+#include <SDL_syswm.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <Windows.h>
+
 #include <time.h>
+#include <dwmapi.h>
 
 #include "ball.h"
 #include "block.h"
@@ -37,6 +39,10 @@ class MainGame
         static const int FPS = 60;
 
     public:
+        static const int IS_DARK_MODE = 1;
+        static const int DARK_MODE_CODE = 20;
+
+    public:
         static const int TITLE_FONT_SIZE = 35;
         static const int INFO_FONT_SIZE = 15;
         static const int TEXT_BORDER = 5;
@@ -65,8 +71,8 @@ class MainGame
         static const int WINDOW_BORDER_Y = 3;
 
     private:
-        HINSTANCE hInstance;
         SDL_Window* window;
+        SDL_SysWMinfo sysInfo;
         SDL_Rect screen;
         SDL_Event event;
 
@@ -86,7 +92,7 @@ class MainGame
         int hitCount;
 
     private:
-        SDL_RWops* getResource(HINSTANCE, LPCSTR, LPCSTR);
+        SDL_RWops* getResource(LPCSTR, LPCSTR);
         SDL_Surface* loadSurface(int);
 
     private:
@@ -114,6 +120,7 @@ class MainGame
     public:
         void initWindow();
         void initGame();
+        void setDarkMode();
         void loadImage();
         void loadFont();
 

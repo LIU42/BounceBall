@@ -1,7 +1,10 @@
 #include "bounceball.h"
 
-SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
+#include <iostream>
+
+SDL_RWops* MainGame::getResource(LPCSTR name, LPCSTR type)
 {
+    HINSTANCE hInst = sysInfo.info.win.hinstance;
     HRSRC hRsrc = FindResource(hInst, name, type);
     DWORD size = SizeofResource(hInst, hRsrc);
     LPVOID data = LockResource(LoadResource(hInst, hRsrc));
@@ -10,7 +13,7 @@ SDL_RWops* MainGame::getResource(HINSTANCE hInst, LPCSTR name, LPCSTR type)
 
 SDL_Surface* MainGame::loadSurface(int id)
 {
-    SDL_RWops* src = getResource(hInstance, MAKEINTRESOURCE(id), TEXT("PNG"));
+    SDL_RWops* src = getResource(MAKEINTRESOURCE(id), TEXT("PNG"));
     SDL_Surface* originSurface = IMG_LoadPNG_RW(src);
     SDL_Surface* convertSurface = SDL_ConvertSurface(originSurface, image.format, NULL);
     SDL_FreeSurface(originSurface);
@@ -21,9 +24,16 @@ SDL_Surface* MainGame::loadSurface(int id)
 void MainGame::initWindow()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-    hInstance = GetModuleHandle(0);
-    window = SDL_CreateWindow("Bounce Ball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_VERSION(&sysInfo.version);
+    window = SDL_CreateWindow("Bounce Ball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_HIDDEN);
     screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    SDL_GetWindowWMInfo(window, &sysInfo);
+}
+
+void MainGame::setDarkMode()
+{
+    DwmSetWindowAttribute(sysInfo.info.win.window, DARK_MODE_CODE, &IS_DARK_MODE, sizeof(IS_DARK_MODE));
+    SDL_ShowWindow(window);
 }
 
 void MainGame::initGame()
@@ -66,8 +76,8 @@ void MainGame::freeImage()
 void MainGame::loadFont()
 {
     TTF_Init();
-    font.title = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, TITLE_FONT_SIZE);
-    font.info = TTF_OpenFontRW(getResource(hInstance, MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, INFO_FONT_SIZE);
+    font.title = TTF_OpenFontRW(getResource(MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, TITLE_FONT_SIZE);
+    font.info = TTF_OpenFontRW(getResource(MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, INFO_FONT_SIZE);
 }
 
 void MainGame::freeFont()

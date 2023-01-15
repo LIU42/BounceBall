@@ -16,4 +16,4 @@ file(GLOB_RECURSE LIBRARY_FILES
 )
 
 add_executable(BounceBall WIN32 ${SOURCES_FILES})
-target_link_libraries(BounceBall ${LIBRARY_FILES})
+target_link_libraries(BounceBall ${LIBRARY_FILES} Dwmapi.lib)

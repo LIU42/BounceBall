@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
     srand((unsigned)time(NULL));
 
     game.initWindow();
+    game.setDarkMode();
     game.initGame();
     game.loadImage();
     game.loadFont();
