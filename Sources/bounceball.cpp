@@ -1,7 +1,5 @@
 #include "bounceball.h"
 
-#include <iostream>
-
 SDL_RWops* MainGame::getResource(LPCSTR name, LPCSTR type)
 {
     HINSTANCE hInst = sysInfo.info.win.hinstance;
