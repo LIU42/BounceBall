@@ -120,9 +120,12 @@ class MainGame
     public:
         void initWindow();
         void initGame();
-        void setDarkMode();
         void loadImage();
         void loadFont();
+
+    public:
+        void setDarkMode();
+        void restoreWindow();
 
     public:
         bool isRunning();

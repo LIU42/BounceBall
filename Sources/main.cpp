@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
     game.initGame();
     game.loadImage();
     game.loadFont();
+    game.restoreWindow();
 
     while (game.isRunning())
     {

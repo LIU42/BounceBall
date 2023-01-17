@@ -23,7 +23,7 @@ void MainGame::initWindow()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_VERSION(&sysInfo.version);
-    window = SDL_CreateWindow("Bounce Ball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_HIDDEN);
+    window = SDL_CreateWindow("Bounce Ball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_GetWindowWMInfo(window, &sysInfo);
 }
@@ -31,7 +31,12 @@ void MainGame::initWindow()
 void MainGame::setDarkMode()
 {
     DwmSetWindowAttribute(sysInfo.info.win.window, DARK_MODE_CODE, &IS_DARK_MODE, sizeof(IS_DARK_MODE));
-    SDL_ShowWindow(window);
+}
+
+void MainGame::restoreWindow()
+{
+    SDL_MinimizeWindow(window);
+    SDL_RestoreWindow(window);
 }
 
 void MainGame::initGame()
