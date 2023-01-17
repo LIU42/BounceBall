@@ -23,7 +23,7 @@ void MainGame::initWindow()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_VERSION(&sysInfo.version);
-    window = SDL_CreateWindow("Bounce Ball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_GetWindowWMInfo(window, &sysInfo);
 }
@@ -245,7 +245,7 @@ void MainGame::displayText(const char* text, int x, int y, TTF_Font* font)
     static SDL_Surface* surface;
     static SDL_Rect rect;
 
-    surface = TTF_RenderText_Blended(font, text, { 255, 255, 255 });
+    surface = TTF_RenderText_Blended(font, text, WHITE);
     rect.x = x;
     rect.y = y;
 

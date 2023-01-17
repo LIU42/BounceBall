@@ -34,6 +34,9 @@ struct Font
 class MainGame
 {
     public:
+        static constexpr auto TITLE = "Bounce Ball";
+
+    public:
         static const int SCREEN_WIDTH = 644;
         static const int SCREEN_HEIGHT = 480;
         static const int FPS = 60;
@@ -69,6 +72,9 @@ class MainGame
     public:
         static const int WINDOW_BORDER_X = 2;
         static const int WINDOW_BORDER_Y = 3;
+
+    public:
+        static constexpr SDL_Color WHITE = { 255, 255, 255 };
 
     private:
         SDL_Window* window;
