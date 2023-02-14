@@ -4,9 +4,9 @@ int main(int argc, char* argv[])
 {
     MainGame game;
 
-    int startTick;
-    int endTick;
-    int delayTick;
+    Uint32 startTick = 0;
+    Uint32 endTick = 0;
+    Uint32 delayTick = 0;
 
     srand((unsigned)time(NULL));
 
@@ -26,9 +26,9 @@ int main(int argc, char* argv[])
         game.display();
         
         endTick = SDL_GetTicks();
-        delayTick = (1000 / game.FPS) - (endTick - startTick);
+        delayTick = game.getDelayTick(startTick, endTick);
         
-        SDL_Delay(SDL_max(delayTick, 0));
+        SDL_Delay(delayTick);
     }
     game.close();
     return 0;

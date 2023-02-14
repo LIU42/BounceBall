@@ -33,47 +33,47 @@ struct Font
 
 class MainGame
 {
-    public:
+    private:
         static constexpr auto TITLE = "Bounce Ball";
 
-    public:
+    private:
         static const int SCREEN_WIDTH = 644;
         static const int SCREEN_HEIGHT = 480;
-        static const int FPS = 60;
+        static const int GAME_FPS = 60;
 
-    public:
+    private:
         static const int IS_DARK_MODE = 1;
         static const int DARK_MODE_CODE = 20;
 
-    public:
+    private:
         static const int TITLE_FONT_SIZE = 35;
         static const int INFO_FONT_SIZE = 15;
         static const int TEXT_BORDER = 5;
         static const int TEXT_LENGTH = 30;
     
-    public:
+    private:
         static const int TITLE_TOP = 150;
         static const int INFO_TOP = 340;
         static const int SCORE_TOP = 250;
         static const int BEST_SCORE_TOP = 270;
 
-    public:
+    private:
         static const int MAIN_TITLE_WIDTH = 210;
         static const int OVER_TITLE_WIDTH = 175;
         static const int INFO_WIDTH = 195;
         static const int SCORE_WIDTH = 120;
         static const int DURING_SCORE_WIDTH = 90;
 
-    public:
+    private:
         static const int GAMEOVER_DELAY_DISTANCE = 200;
         static const int CATCH_SCORE = 1;
         static const int HIT_SCORE = 5;
 
-    public:
+    private:
         static const int WINDOW_BORDER_X = 2;
         static const int WINDOW_BORDER_Y = 3;
 
-    public:
+    private:
         static constexpr SDL_Color WHITE = { 255, 255, 255 };
 
     private:
@@ -99,7 +99,7 @@ class MainGame
 
     private:
         SDL_RWops* getResource(LPCSTR, LPCSTR);
-        SDL_Surface* loadSurface(int);
+        SDL_Surface* loadSurface(Uint32);
 
     private:
         void initBlock();
@@ -122,6 +122,9 @@ class MainGame
         void reflectOnPlank();
         void reflectOnEdge();
         void reflectOnBlock();
+
+    public:
+        static Uint32 getDelayTick(Uint32, Uint32);
 
     public:
         void initWindow();
