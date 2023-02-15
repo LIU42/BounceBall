@@ -212,7 +212,7 @@ Uint32 MainGame::getDelayTick(Uint32 startTick, Uint32 endTick)
     int deltaTick = endTick - startTick;
     int delayTick = 1000 / GAME_FPS - deltaTick;
 
-    return SDL_max(delayTick, 0);   
+    return (delayTick > 0) ? delayTick : 0;   
 }
 
 bool MainGame::isRunning()

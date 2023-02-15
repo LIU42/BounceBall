@@ -126,7 +126,7 @@ class MainGame
         void reflectOnBlock();
 
     public:
-        static Uint32 getDelayTick(Uint32, Uint32);
+        Uint32 getDelayTick(Uint32, Uint32);
 
     public:
         void initEnvironment();
