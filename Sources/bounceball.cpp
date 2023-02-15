@@ -12,20 +12,28 @@ SDL_RWops* MainGame::getResource(LPCSTR name, LPCSTR type)
 
 SDL_Surface* MainGame::loadSurface(Uint32 id)
 {
-    SDL_RWops* src = getResource(MAKEINTRESOURCE(id), TEXT("PNG"));
-    SDL_Surface* originSurface = IMG_LoadPNG_RW(src);
-    SDL_Surface* convertSurface = SDL_ConvertSurface(originSurface, image.format, NULL);
-    SDL_FreeSurface(originSurface);
-    SDL_FreeRW(src);
-    return convertSurface;
+    SDL_RWops* pResource = getResource(MAKEINTRESOURCE(id), TEXT("PNG"));
+    SDL_Surface* originalSurface = IMG_LoadPNG_RW(pResource);
+    SDL_Surface* convertedSurface = SDL_ConvertSurface(originalSurface, format, NULL);
+    SDL_FreeSurface(originalSurface);
+    SDL_FreeRW(pResource);
+    return convertedSurface;
+}
+
+void MainGame::initEnvironment()
+{
+    SDL_Init(SDL_INIT_EVERYTHING);
+    IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
+    SDL_VERSION(&sysInfo.version);
 }
 
 void MainGame::initWindow()
 {
-    SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_VERSION(&sysInfo.version);
     window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    surface = SDL_GetWindowSurface(window);
+    format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
+    screenRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_GetWindowWMInfo(window, &sysInfo);
 }
 
@@ -62,42 +70,49 @@ void MainGame::initBlock()
 
 void MainGame::loadImage()
 {
-    image.format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
-    image.surface = SDL_GetWindowSurface(window);
-    image.plank = loadSurface(IDB_PNG1);
-    image.ball = loadSurface(IDB_PNG2);
-    image.block = loadSurface(IDB_PNG3);
-}
-
-void MainGame::freeImage()
-{
-    SDL_FreeFormat(image.format);
-    SDL_FreeSurface(image.plank);
-    SDL_FreeSurface(image.ball);
-    SDL_FreeSurface(image.block);
+    images.plank = loadSurface(IDB_PNG1);
+    images.ball = loadSurface(IDB_PNG2);
+    images.block = loadSurface(IDB_PNG3);
 }
 
 void MainGame::loadFont()
 {
-    TTF_Init();
-    font.title = TTF_OpenFontRW(getResource(MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, TITLE_FONT_SIZE);
-    font.info = TTF_OpenFontRW(getResource(MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, INFO_FONT_SIZE);
+    fonts.title = TTF_OpenFontRW(getResource(MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, TITLE_FONT_SIZE);
+    fonts.info = TTF_OpenFontRW(getResource(MAKEINTRESOURCE(IDR_FONT1), RT_FONT), true, INFO_FONT_SIZE);
+}
+
+void MainGame::freeImage()
+{
+    SDL_FreeSurface(images.plank);
+    SDL_FreeSurface(images.ball);
+    SDL_FreeSurface(images.block);
 }
 
 void MainGame::freeFont()
 {
-    TTF_CloseFont(font.title);
-    TTF_CloseFont(font.info);
+    TTF_CloseFont(fonts.title);
+    TTF_CloseFont(fonts.info);
+}
+
+void MainGame::closeWindow()
+{
+    SDL_DestroyWindow(window);
+    SDL_FreeFormat(format);
+}
+
+void MainGame::closeEnvironment()
+{
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
 }
 
 void MainGame::close()
 {
-    SDL_DestroyWindow(window);
     freeImage();
     freeFont();
-    IMG_Quit();
-    TTF_Quit();
-    SDL_Quit();
+    closeWindow();
+    closeEnvironment();
 }
 
 void MainGame::levelUp()
@@ -227,7 +242,8 @@ void MainGame::events()
             {
                 case START: status = PLAYING; break;
                 case PAUSE: status = PLAYING; break;
-                case WIN: case OVER: restart(); status = PLAYING; break;
+                case WIN: restart(); status = PLAYING; break;
+                case OVER: restart(); status = PLAYING; break;
             }
         }
         if (event.type == SDL_MOUSEMOTION && status == PLAYING)
@@ -246,20 +262,21 @@ void MainGame::events()
             }
         }
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
+        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_MINIMIZED && status == PLAYING) { status = PAUSE; }
     }
 }
 
 void MainGame::displayText(const char* text, int x, int y, TTF_Font* font)
 {
-    static SDL_Surface* surface;
-    static SDL_Rect rect;
+    static SDL_Surface* textSurface;
+    static SDL_Rect textRect;
 
-    surface = TTF_RenderText_Blended(font, text, WHITE);
-    rect.x = x;
-    rect.y = y;
+    textSurface = TTF_RenderText_Blended(font, text, WHITE);
+    textRect.x = x;
+    textRect.y = y;
 
-    SDL_BlitSurface(surface, NULL, image.surface, &rect);
-    SDL_FreeSurface(surface);
+    SDL_BlitSurface(textSurface, NULL, surface, &textRect);
+    SDL_FreeSurface(textSurface);
 }
 
 void MainGame::displayImage()
@@ -278,17 +295,17 @@ void MainGame::displayInfo()
 
     if (status == START)
     {
-        displayText("BOUNCE BALL", (SCREEN_WIDTH - MAIN_TITLE_WIDTH) / 2, TITLE_TOP, font.title);
-        displayText("Click anywhere to START...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_TOP, font.info);
+        displayText("BOUNCE BALL", (SCREEN_WIDTH - MAIN_TITLE_WIDTH) / 2, TITLE_TOP, fonts.title);
+        displayText("Click anywhere to START...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_TOP, fonts.info);
     }
     else if (status == PLAYING || status == PAUSE)
     {
         if (status == PAUSE)
         {
-            displayText("PAUSE", TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, font.info);
+            displayText("PAUSE", TEXT_BORDER, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, fonts.info);
         }
         SDL_snprintf(text, TEXT_LENGTH, "Score: %d", score);
-        displayText(text, SCREEN_WIDTH - TEXT_BORDER - DURING_SCORE_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, font.info);
+        displayText(text, SCREEN_WIDTH - TEXT_BORDER - DURING_SCORE_WIDTH, SCREEN_HEIGHT - INFO_FONT_SIZE - TEXT_BORDER, fonts.info);
     }
     else if (status == OVER || status == WIN)
     {
@@ -297,23 +314,23 @@ void MainGame::displayInfo()
             case OVER: SDL_snprintf(text, TEXT_LENGTH, "GAMEOVER!"); break;
             case WIN: SDL_snprintf(text, TEXT_LENGTH, "YOU WIN!"); break;
         }
-        displayText(text, (SCREEN_WIDTH - OVER_TITLE_WIDTH) / 2, TITLE_TOP, font.title);
+        displayText(text, (SCREEN_WIDTH - OVER_TITLE_WIDTH) / 2, TITLE_TOP, fonts.title);
         SDL_snprintf(text, TEXT_LENGTH, "Your score: %d", score);
-        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, SCORE_TOP, font.info);
+        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, SCORE_TOP, fonts.info);
         SDL_snprintf(text, TEXT_LENGTH, "Best score: %d", bestScore);
-        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, BEST_SCORE_TOP, font.info);
-        displayText("Click anywhere to RESTART...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_TOP, font.info);
+        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, BEST_SCORE_TOP, fonts.info);
+        displayText("Click anywhere to RESTART...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_TOP, fonts.info);
     }
 }
 
 void MainGame::displayPlank()
 {
-    SDL_BlitSurface(image.plank, NULL, image.surface, &plank);
+    SDL_BlitSurface(images.plank, NULL, surface, &plank);
 }
 
 void MainGame::displayBall()
 {
-    SDL_BlitSurface(image.ball, NULL, image.surface, &ball);
+    SDL_BlitSurface(images.ball, NULL, surface, &ball);
 }
 
 void MainGame::displayBlock()
@@ -324,7 +341,7 @@ void MainGame::displayBlock()
         {
             if (block[x][y].getIsAlive())
             {
-                SDL_BlitSurface(image.block, NULL, image.surface, &block[x][y]);
+                SDL_BlitSurface(images.block, NULL, surface, &block[x][y]);
             }
         }
     }
@@ -332,7 +349,7 @@ void MainGame::displayBlock()
 
 void MainGame::display()
 {
-    SDL_FillRect(image.surface, &screen, 0x161616);
+    SDL_FillRect(surface, &screenRect, 0x161616);
     displayImage();
     displayInfo();
     SDL_UpdateWindowSurface(window);

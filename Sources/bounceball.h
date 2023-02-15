@@ -16,16 +16,14 @@
 
 enum Status { START, PLAYING, PAUSE, OVER, WIN, EXIT };
 
-struct Image
+struct Images
 {
-    SDL_PixelFormat* format;
-    SDL_Surface* surface;
     SDL_Surface* plank;
     SDL_Surface* ball;
     SDL_Surface* block;
 };
 
-struct Font
+struct Fonts
 {
     TTF_Font* title;
     TTF_Font* info;
@@ -78,13 +76,15 @@ class MainGame
 
     private:
         SDL_Window* window;
+        SDL_Surface* surface;
+        SDL_PixelFormat* format;
         SDL_SysWMinfo sysInfo;
-        SDL_Rect screen;
+        SDL_Rect screenRect;
         SDL_Event event;
 
     private:
-        Image image;
-        Font font;
+        Images images;
+        Fonts fonts;
 
     private:
         Ball ball;
@@ -105,6 +105,8 @@ class MainGame
         void initBlock();
         void freeImage();
         void freeFont();
+        void closeWindow();
+        void closeEnvironment();
         void levelUp();
         void restart();
         void gameover();
@@ -127,6 +129,7 @@ class MainGame
         static Uint32 getDelayTick(Uint32, Uint32);
 
     public:
+        void initEnvironment();
         void initWindow();
         void initGame();
         void loadImage();

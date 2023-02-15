@@ -10,6 +10,7 @@ int main(int argc, char* argv[])
 
     srand((unsigned)time(NULL));
 
+    game.initEnvironment();
     game.initWindow();
     game.setDarkMode();
     game.initGame();
