@@ -126,9 +126,6 @@ class MainGame
         void reflectOnBlock();
 
     public:
-        Uint32 getDelayTick(Uint32, Uint32);
-
-    public:
         void initEnvironment();
         void initWindow();
         void initGame();
@@ -145,5 +142,6 @@ class MainGame
         void update();
         void events();
         void display();
+        void delay(Uint32, Uint32);
 };
 #endif

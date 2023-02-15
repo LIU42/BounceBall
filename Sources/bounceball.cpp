@@ -207,14 +207,6 @@ void MainGame::reflectOnBlock()
     }
 }
 
-Uint32 MainGame::getDelayTick(Uint32 startTick, Uint32 endTick)
-{
-    int deltaTick = endTick - startTick;
-    int delayTick = 1000 / GAME_FPS - deltaTick;
-
-    return (delayTick > 0) ? delayTick : 0;   
-}
-
 bool MainGame::isRunning()
 {
     return status != EXIT;
@@ -353,4 +345,15 @@ void MainGame::display()
     displayImage();
     displayInfo();
     SDL_UpdateWindowSurface(window);
+}
+
+void MainGame::delay(Uint32 startTick, Uint32 endTick)
+{
+    int deltaTick = endTick - startTick;
+    int delayTick = 1000 / GAME_FPS - deltaTick;
+
+    if (delayTick > 0)
+    {
+        SDL_Delay(delayTick);
+    }
 }

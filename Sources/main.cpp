@@ -6,7 +6,6 @@ int main(int argc, char* argv[])
 
     Uint32 startTick = 0;
     Uint32 endTick = 0;
-    Uint32 delayTick = 0;
 
     srand((unsigned)time(NULL));
 
@@ -21,16 +20,13 @@ int main(int argc, char* argv[])
     while (game.isRunning())
     {
         startTick = SDL_GetTicks();
-
         game.update();
         game.events();
-        game.display();
-        
-        endTick = SDL_GetTicks();
-        delayTick = game.getDelayTick(startTick, endTick);
-        
-        SDL_Delay(delayTick);
+        game.display(); 
+        endTick = SDL_GetTicks();    
+        game.delay(startTick, endTick);
     }
     game.close();
-    return 0;
+    
+    return EXIT_SUCCESS;
 }
