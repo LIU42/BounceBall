@@ -18,15 +18,15 @@ enum Status { START, PLAYING, PAUSE, OVER, WIN, EXIT };
 
 struct Images
 {
-    SDL_Surface* plank;
-    SDL_Surface* ball;
-    SDL_Surface* block;
+    SDL_Surface* pPlank;
+    SDL_Surface* pBall;
+    SDL_Surface* pBlock;
 };
 
 struct Fonts
 {
-    TTF_Font* title;
-    TTF_Font* info;
+    TTF_Font* pTitle;
+    TTF_Font* pInfo;
 };
 
 class MainGame
@@ -75,10 +75,10 @@ class MainGame
         static constexpr SDL_Color WHITE = { 255, 255, 255 };
 
     private:
-        SDL_Window* window;
-        SDL_Surface* surface;
-        SDL_PixelFormat* format;
-        SDL_SysWMinfo sysInfo;
+        SDL_Window* pWindow;
+        SDL_Surface* pSurface;
+        SDL_PixelFormat* pFormat;
+        SDL_SysWMinfo windowInfo;
         SDL_Rect screenRect;
         SDL_Event event;
 
@@ -102,14 +102,33 @@ class MainGame
         SDL_Surface* loadSurface(Uint32);
 
     private:
+        void initSystem();
+        void initWindow();
+        void initGame();
         void initBlock();
-        void freeImage();
-        void freeFont();
+        void loadImages();
+        void loadFonts();
+
+    private:
+        void setDarkMode();
+        void restoreWindow();
+
+    private:
+        void freeImages();
+        void freeFonts();
         void closeWindow();
-        void closeEnvironment();
+        void closeSystem();
+
+    private:
         void levelUp();
         void restart();
         void gameover();
+
+    private:
+        void reflect();
+        void reflectOnPlank();
+        void reflectOnEdge();
+        void reflectOnBlock();
 
     private:
         void displayText(const char*, int, int, TTF_Font*);
@@ -119,26 +138,12 @@ class MainGame
         void displayBall();
         void displayBlock();
 
-    private:
-        void reflect();
-        void reflectOnPlank();
-        void reflectOnEdge();
-        void reflectOnBlock();
-
     public:
-        void initEnvironment();
-        void initWindow();
-        void initGame();
-        void loadImage();
-        void loadFont();
-
-    public:
-        void setDarkMode();
-        void restoreWindow();
+        MainGame();
+        ~MainGame();
 
     public:
         bool isRunning();
-        void close();
         void update();
         void events();
         void display();

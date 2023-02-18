@@ -7,16 +7,6 @@ int main(int argc, char* argv[])
     Uint32 startTick = 0;
     Uint32 endTick = 0;
 
-    srand((unsigned)time(NULL));
-
-    game.initEnvironment();
-    game.initWindow();
-    game.setDarkMode();
-    game.initGame();
-    game.loadImage();
-    game.loadFont();
-    game.restoreWindow();
-
     while (game.isRunning())
     {
         startTick = SDL_GetTicks();
@@ -26,7 +16,5 @@ int main(int argc, char* argv[])
         endTick = SDL_GetTicks();    
         game.delay(startTick, endTick);
     }
-    game.close();
-
     return EXIT_SUCCESS;
 }
