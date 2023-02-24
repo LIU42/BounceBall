@@ -102,6 +102,7 @@ class MainGame
         SDL_Surface* loadSurface(Uint32);
 
     private:
+        void getVersion();
         void initSystem();
         void initWindow();
         void initGame();

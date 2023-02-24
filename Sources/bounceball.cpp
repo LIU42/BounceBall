@@ -20,10 +20,16 @@ SDL_Surface* MainGame::loadSurface(Uint32 id)
     return pConvertedSurface;
 }
 
+void MainGame::getVersion()
+{
+    windowInfo.version.major = SDL_MAJOR_VERSION;
+    windowInfo.version.minor = SDL_MINOR_VERSION;
+    windowInfo.version.patch = SDL_PATCHLEVEL;
+}
+
 void MainGame::initSystem()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_VERSION(&windowInfo.version);
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
 }
@@ -202,13 +208,13 @@ void MainGame::reflectOnBlock()
 void MainGame::displayText(const char* pText, int x, int y, TTF_Font* pFont)
 {
     static SDL_Surface* pTextSurface;
-    static SDL_Rect pTextRect;
+    static SDL_Rect textRect;
 
     pTextSurface = TTF_RenderText_Blended(pFont, pText, WHITE);
-    pTextRect.x = x;
-    pTextRect.y = y;
+    textRect.x = x;
+    textRect.y = y;
 
-    SDL_BlitSurface(pTextSurface, NULL, pSurface, &pTextRect);
+    SDL_BlitSurface(pTextSurface, NULL, pSurface, &textRect);
     SDL_FreeSurface(pTextSurface);
 }
 
@@ -283,6 +289,7 @@ void MainGame::displayBlock()
 MainGame::MainGame()
 {
     srand((unsigned)time(NULL));
+    getVersion();
     initSystem();
     initWindow();
     setDarkMode();
