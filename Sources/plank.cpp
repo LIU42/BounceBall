@@ -2,23 +2,23 @@
 
 void Plank::init(int screenWidth)
 {
-    this->x = (screenWidth - WIDTH) / 2;
-    this->y = INIT_TOP;
-    this->w = WIDTH;
-    this->h = HEIGHT;
+    SDL_Rect::x = (screenWidth - WIDTH) / 2;
+    SDL_Rect::y = INIT_UPPER;
+    SDL_Rect::w = WIDTH;
+    SDL_Rect::h = HEIGHT;
 }
 
 void Plank::moveTo(int mouseX)
 {
-    this->x = mouseX - WIDTH / 2;
+    SDL_Rect::x = mouseX - WIDTH / 2;
 }
 
 int Plank::getLeftBorder()
 {
-    return this->x;
+    return SDL_Rect::x;
 }
 
 int Plank::getRightBorder()
 {
-    return this->x + WIDTH;
+    return SDL_Rect::x + WIDTH;
 }

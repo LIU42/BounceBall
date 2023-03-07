@@ -2,16 +2,16 @@
 
 void Block::init(int x, int y)
 {
-    this->x = x;
-    this->y = y;
-    this->w = SIZE;
-    this->h = SIZE;
-    this->isAlive = true;
+    SDL_Rect::x = x;
+    SDL_Rect::y = y;
+    SDL_Rect::w = SIZE;
+    SDL_Rect::h = SIZE;
+    isAlive = true;
 }
 
-void Block::destoryed()
+void Block::destroyed()
 {
-    this->isAlive = false;
+    isAlive = false;
 }
 
 bool Block::getIsAlive()
@@ -21,10 +21,10 @@ bool Block::getIsAlive()
 
 int Block::getCenterX()
 {
-    return this->x + SIZE / 2;
+    return SDL_Rect::x + SIZE / 2;
 }
 
 int Block::getCenterY()
 {
-    return this->y + SIZE / 2;
+    return SDL_Rect::y + SIZE / 2;
 }

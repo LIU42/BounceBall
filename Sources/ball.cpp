@@ -2,13 +2,13 @@
 
 void Ball::init(int screenWidth)
 {
-    this->x = rand() % (screenWidth - 2 * INIT_MARGIN) + INIT_MARGIN;
-    this->y = INIT_TOP;
-    this->w = RADIUS * 2;
-    this->h = RADIUS * 2;
+    SDL_Rect::x = rand() % (screenWidth - 2 * INIT_MARGIN) + INIT_MARGIN;
+    SDL_Rect::y = INIT_UPPER;
+    SDL_Rect::w = RADIUS * 2;
+    SDL_Rect::h = RADIUS * 2;
 
-    this->speed = INIT_SPEED;
-    this->signY = -1;
+    speed = INIT_SPEED;
+    signY = -1;
 
     switch (rand() % 2)
     {
@@ -19,8 +19,8 @@ void Ball::init(int screenWidth)
 
 void Ball::move()
 {
-    this->x += signX * speed;
-    this->y += signY * speed;
+    SDL_Rect::x += signX * speed;
+    SDL_Rect::y += signY * speed;
 }
 
 void Ball::speedUp(int score)
@@ -28,24 +28,24 @@ void Ball::speedUp(int score)
     speed = INIT_SPEED + score / SPEED_STEP;
 }
 
+void Ball::setSignX(int sign)
+{
+    signX = sign;
+}
+
+void Ball::setSignY(int sign)
+{
+    signY = sign;
+}
+
 void Ball::reflectX()
 {
-    this->signX = -signX;
+    signX = -signX;
 }
 
 void Ball::reflectY()
 {
-    this->signY = -signY;
-}
-
-void Ball::reflectX(int sign)
-{
-    this->signX = sign;
-}
-
-void Ball::reflectY(int sign)
-{
-    this->signY = sign;
+    signY = -signY;
 }
 
 int Ball::getSpeed()
@@ -55,10 +55,10 @@ int Ball::getSpeed()
 
 int Ball::getCenterX()
 {
-    return this->x + RADIUS;
+    return SDL_Rect::x + RADIUS;
 }
 
 int Ball::getCenterY()
 {
-    return this->y + RADIUS;
+    return SDL_Rect::y + RADIUS;
 }

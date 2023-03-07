@@ -50,10 +50,10 @@ class MainGame
         static const int TEXT_LENGTH = 30;
     
     private:
-        static const int TITLE_TOP = 150;
-        static const int INFO_TOP = 340;
-        static const int SCORE_TOP = 250;
-        static const int BEST_SCORE_TOP = 270;
+        static const int TITLE_UPPER = 150;
+        static const int INFO_UPPER = 340;
+        static const int SCORE_UPPER = 250;
+        static const int BEST_SCORE_UPPER = 270;
 
     private:
         static const int MAIN_TITLE_WIDTH = 210;

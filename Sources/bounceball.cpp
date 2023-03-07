@@ -1,4 +1,5 @@
 #include "bounceball.h"
+#include <stdio.h>
 
 SDL_RWops* MainGame::getResource(LPCSTR name, LPCSTR type)
 {
@@ -151,7 +152,7 @@ void MainGame::reflect()
 
 void MainGame::reflectOnPlank()
 {
-    if (ball.getCenterY() >= ball.INIT_TOP + ball.RADIUS && ball.getCenterY() < ball.INIT_TOP + ball.RADIUS + ball.getSpeed())
+    if (ball.getCenterY() >= ball.INIT_UPPER + ball.RADIUS && ball.getCenterY() < ball.INIT_UPPER + ball.RADIUS + ball.getSpeed())
     {
         if (ball.getCenterX() >= plank.getLeftBorder() - ball.getSpeed() && ball.getCenterX() <= plank.getRightBorder() + ball.getSpeed())
         {
@@ -190,13 +191,13 @@ void MainGame::reflectOnBlock()
                 {
                     if (absDistanceX == absDistanceY)
                     {
-                        if (!isReflectX) { ball.reflectX(distanceX / absDistanceX); isReflectX = true; }
-                        if (!isReflectY) { ball.reflectY(distanceY / absDistanceY); isReflectY = true; }
+                        if (!isReflectX) { ball.setSignX(distanceX / absDistanceX); isReflectX = true; }
+                        if (!isReflectY) { ball.setSignY(distanceY / absDistanceY); isReflectY = true; }
                     }
                     else if (absDistanceX < absDistanceY && !isReflectY) { ball.reflectY(); isReflectY = true; }
                     else if (absDistanceX > absDistanceY && !isReflectX) { ball.reflectX(); isReflectX = true; }
 
-                    block[x][y].destoryed();
+                    block[x][y].destroyed();
                     score += HIT_SCORE;
                     hitCount += 1;
                 }
@@ -207,12 +208,8 @@ void MainGame::reflectOnBlock()
 
 void MainGame::displayText(const char* pText, int x, int y, TTF_Font* pFont)
 {
-    static SDL_Surface* pTextSurface;
-    static SDL_Rect textRect;
-
-    pTextSurface = TTF_RenderText_Blended(pFont, pText, WHITE);
-    textRect.x = x;
-    textRect.y = y;
+    SDL_Surface* pTextSurface = TTF_RenderText_Blended(pFont, pText, WHITE);
+    SDL_Rect textRect = { x, y };
 
     SDL_BlitSurface(pTextSurface, NULL, pSurface, &textRect);
     SDL_FreeSurface(pTextSurface);
@@ -234,8 +231,8 @@ void MainGame::displayInfo()
 
     if (status == START)
     {
-        displayText("BOUNCE BALL", (SCREEN_WIDTH - MAIN_TITLE_WIDTH) / 2, TITLE_TOP, fonts.pTitle);
-        displayText("Click anywhere to START...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_TOP, fonts.pInfo);
+        displayText("BOUNCE BALL", (SCREEN_WIDTH - MAIN_TITLE_WIDTH) / 2, TITLE_UPPER, fonts.pTitle);
+        displayText("Click anywhere to START...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_UPPER, fonts.pInfo);
     }
     else if (status == PLAYING || status == PAUSE)
     {
@@ -253,12 +250,14 @@ void MainGame::displayInfo()
             case OVER: SDL_snprintf(text, TEXT_LENGTH, "GAMEOVER!"); break;
             case WIN: SDL_snprintf(text, TEXT_LENGTH, "YOU WIN!"); break;
         }
-        displayText(text, (SCREEN_WIDTH - OVER_TITLE_WIDTH) / 2, TITLE_TOP, fonts.pTitle);
+        displayText(text, (SCREEN_WIDTH - OVER_TITLE_WIDTH) / 2, TITLE_UPPER, fonts.pTitle);
         SDL_snprintf(text, TEXT_LENGTH, "Your score: %d", score);
-        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, SCORE_TOP, fonts.pInfo);
+
+        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, SCORE_UPPER, fonts.pInfo);
         SDL_snprintf(text, TEXT_LENGTH, "Best score: %d", bestScore);
-        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, BEST_SCORE_TOP, fonts.pInfo);
-        displayText("Click anywhere to RESTART...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_TOP, fonts.pInfo);
+
+        displayText(text, (SCREEN_WIDTH - SCORE_WIDTH) / 2, BEST_SCORE_UPPER, fonts.pInfo);
+        displayText("Click anywhere to RESTART...", (SCREEN_WIDTH - INFO_WIDTH) / 2, INFO_UPPER, fonts.pInfo);
     }
 }
 
@@ -328,30 +327,20 @@ void MainGame::events()
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT) { status = EXIT; }
-        if (event.type == SDL_MOUSEBUTTONDOWN)
+        if (event.type == SDL_MOUSEBUTTONDOWN && isRunning())
         {
-            switch (status)
-            {
-                case START: status = PLAYING; break;
-                case PAUSE: status = PLAYING; break;
-                case WIN: restart(); status = PLAYING; break;
-                case OVER: restart(); status = PLAYING; break;
-            }
+            if (status == WIN || status == OVER) { restart(); }
+            status = PLAYING;
         }
         if (event.type == SDL_MOUSEMOTION && status == PLAYING)
         {
-            if (event.motion.x >= plank.WIDTH / 2 && event.motion.x <= SCREEN_WIDTH - plank.WIDTH / 2)
-            {
-                plank.moveTo(event.motion.x);
-            }
-            else if (event.motion.x < plank.WIDTH / 2)
-            {
-                plank.moveTo(plank.WIDTH / 2);
-            }
-            else if (event.motion.x > SCREEN_WIDTH - plank.WIDTH / 2)
-            {
-                plank.moveTo(SCREEN_WIDTH - plank.WIDTH / 2);
-            }
+            int leftBorder = Plank::WIDTH / 2;
+            int rightBorder = SCREEN_WIDTH - Plank::WIDTH / 2;
+
+            if (event.motion.x < leftBorder) { plank.moveTo(leftBorder); continue; }
+            if (event.motion.x > rightBorder) { plank.moveTo(rightBorder); continue; }
+
+            plank.moveTo(event.motion.x);
         }
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_p && status == PLAYING) { status = PAUSE; }
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_MINIMIZED && status == PLAYING) { status = PAUSE; }
@@ -371,8 +360,5 @@ void MainGame::delay(Uint32 startTick, Uint32 endTick)
     int deltaTick = endTick - startTick;
     int delayTick = 1000 / GAME_FPS - deltaTick;
 
-    if (delayTick > 0)
-    {
-        SDL_Delay(delayTick);
-    }
+    SDL_Delay((delayTick > 0) ? delayTick : 0);
 }

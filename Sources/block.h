@@ -15,7 +15,7 @@ class Block : public SDL_Rect
 
     public:
         void init(int, int);
-        void destoryed();
+        void destroyed();
 
     public:
         bool getIsAlive();
