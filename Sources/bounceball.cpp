@@ -1,5 +1,4 @@
 #include "bounceball.h"
-#include <stdio.h>
 
 SDL_RWops* MainGame::getResource(LPCSTR name, LPCSTR type)
 {
