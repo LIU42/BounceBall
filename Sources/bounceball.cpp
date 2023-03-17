@@ -209,7 +209,7 @@ void MainGame::reflectOnBlock()
 void MainGame::displayText(const char* pText, int x, int y, TTF_Font* pFont)
 {
     SDL_Surface* pTextSurface = TTF_RenderText_Blended(pFont, pText, WHITE);
-    SDL_Rect textRect = { x, y };
+    SDL_Rect textRect = { x, y, 0, 0 };
 
     SDL_BlitSurface(pTextSurface, NULL, pSurface, &textRect);
     SDL_FreeSurface(pTextSurface);
