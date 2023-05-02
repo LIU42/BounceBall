@@ -10,9 +10,9 @@ SDL_RWops* MainGame::getResource(LPCSTR name, LPCSTR type)
     return SDL_RWFromConstMem(data, size);
 }
 
-SDL_Surface* MainGame::loadSurface(Uint32 id)
+SDL_Surface* MainGame::loadSurface(Uint32 resourceID)
 {
-    SDL_RWops* pResource = getResource(MAKEINTRESOURCE(id), TEXT("PNG"));
+    SDL_RWops* pResource = getResource(MAKEINTRESOURCE(resourceID), TEXT("PNG"));
     SDL_Surface* pOriginalSurface = IMG_LoadPNG_RW(pResource);
     SDL_Surface* pConvertedSurface = SDL_ConvertSurface(pOriginalSurface, pFormat, NULL);
     SDL_FreeSurface(pOriginalSurface);
@@ -176,31 +176,35 @@ void MainGame::reflectOnBlock()
     {
         for (int y = 0; y < Block::COLS; y++)
         {
-            if (block[x][y].getIsAlive())
+            if (!block[x][y].getIsAlive())
             {
-                int distanceX = ball.getCenterX() - block[x][y].getCenterX();
-                int distanceY = ball.getCenterY() - block[x][y].getCenterY();
-
-                int absDistanceX = SDL_abs(distanceX);
-                int absDistanceY = SDL_abs(distanceY);
-
-                if (absDistanceX > ball.RADIUS + Block::SIZE / 2) { break; }
-
-                if (SDL_pow(absDistanceX, 2) + SDL_pow(absDistanceY, 2) <= SDL_pow(ball.RADIUS + Block::SIZE / 2, 2))
-                {
-                    if (absDistanceX == absDistanceY)
-                    {
-                        if (!isReflectX) { ball.setSignX(distanceX / absDistanceX); isReflectX = true; }
-                        if (!isReflectY) { ball.setSignY(distanceY / absDistanceY); isReflectY = true; }
-                    }
-                    else if (absDistanceX < absDistanceY && !isReflectY) { ball.reflectY(); isReflectY = true; }
-                    else if (absDistanceX > absDistanceY && !isReflectX) { ball.reflectX(); isReflectX = true; }
-
-                    block[x][y].destroyed();
-                    score += HIT_SCORE;
-                    hitCount += 1;
-                }
+                continue;
             }
+            int distanceX = ball.getCenterX() - block[x][y].getCenterX();
+            int distanceY = ball.getCenterY() - block[x][y].getCenterY();
+
+            int absDistanceX = SDL_abs(distanceX);
+            int absDistanceY = SDL_abs(distanceY);
+
+            if (absDistanceX > ball.RADIUS + Block::SIZE / 2)
+            {
+                break;
+            }
+            if (SDL_pow(absDistanceX, 2) + SDL_pow(absDistanceY, 2) > SDL_pow(ball.RADIUS + Block::SIZE / 2, 2))
+            {
+                continue;
+            }
+            if (absDistanceX == absDistanceY)
+            {
+                if (!isReflectX) { ball.setSignX(distanceX / absDistanceX); isReflectX = true; }
+                if (!isReflectY) { ball.setSignY(distanceY / absDistanceY); isReflectY = true; }
+            }
+            else if (absDistanceX < absDistanceY && !isReflectY) { ball.reflectY(); isReflectY = true; }
+            else if (absDistanceX > absDistanceY && !isReflectX) { ball.reflectX(); isReflectX = true; }
+
+            block[x][y].destroyed();
+            score += HIT_SCORE;
+            hitCount += 1;
         }
     }
 }
