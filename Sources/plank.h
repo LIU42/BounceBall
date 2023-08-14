@@ -8,10 +8,11 @@ class Plank : public SDL_Rect
     public:
         static const int WIDTH = 80;
         static const int HEIGHT = 8;
-        static const int INIT_UPPER = 420;
+        static const int INIT_X = 282;
+        static const int INIT_Y = 420;
 
     public:
-        void init(int);
+        void init();
         void moveTo(int);
 
     public:

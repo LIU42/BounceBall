@@ -1,9 +1,9 @@
 #include "plank.h"
 
-void Plank::init(int screenWidth)
+void Plank::init()
 {
-    SDL_Rect::x = (screenWidth - WIDTH) / 2;
-    SDL_Rect::y = INIT_UPPER;
+    SDL_Rect::x = INIT_X;
+    SDL_Rect::y = INIT_Y;
     SDL_Rect::w = WIDTH;
     SDL_Rect::h = HEIGHT;
 }

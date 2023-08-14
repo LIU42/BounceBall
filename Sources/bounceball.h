@@ -5,28 +5,41 @@
 #include <SDL_syswm.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-
-#include <time.h>
 #include <dwmapi.h>
+#include <time.h>
 
 #include "ball.h"
 #include "block.h"
 #include "plank.h"
 #include "resource.h"
 
-enum Status { START, PLAYING, PAUSE, OVER, WIN, EXIT };
-
-struct Images
+enum GameStatus
 {
-    SDL_Surface* pPlank;
-    SDL_Surface* pBall;
-    SDL_Surface* pBlock;
+    STATUS_START,
+    STATUS_PLAYING,
+    STATUS_PAUSE,
+    STATUS_FAILURE,
+    STATUS_SUCCESS,
+    STATUS_EXIT
 };
 
-struct Fonts
+class GameImages
 {
-    TTF_Font* pTitle;
-    TTF_Font* pInfo;
+    friend class MainGame;
+
+    private:
+        SDL_Surface* pPlank;
+        SDL_Surface* pBall;
+        SDL_Surface* pBlock;
+};
+
+class GameFonts
+{
+    friend class MainGame;
+
+    private:
+        TTF_Font* pTitle;
+        TTF_Font* pInfo;
 };
 
 class MainGame
@@ -40,7 +53,7 @@ class MainGame
         static const int GAME_FPS = 60;
 
     private:
-        static const int IS_DARK_MODE = 1;
+        static const int DARK_MODE_FLAG = 1;
         static const int DARK_MODE_CODE = 20;
 
     private:
@@ -78,21 +91,22 @@ class MainGame
         SDL_Window* pWindow;
         SDL_Surface* pSurface;
         SDL_PixelFormat* pFormat;
+
+    private:
         SDL_SysWMinfo windowInfo;
-        SDL_Rect screenRect;
         SDL_Event event;
 
     private:
-        Images images;
-        Fonts fonts;
+        GameImages images;
+        GameFonts fonts;
 
     private:
+        Block blockMatrix[Block::ROWS][Block::COLS];
         Ball ball;
         Plank plank;
-        Block block[Block::ROWS][Block::COLS];
 
     private:
-        Status status;
+        GameStatus status;
         int score;
         int bestScore;
         int hitCount;
@@ -106,13 +120,13 @@ class MainGame
         void initSystem();
         void initWindow();
         void initGame();
-        void initBlock();
+        void initBlockMatrix();
         void loadImages();
         void loadFonts();
 
     private:
         void setDarkMode();
-        void restoreWindow();
+        void showWindow();
 
     private:
         void freeImages();
@@ -122,7 +136,7 @@ class MainGame
 
     private:
         void levelUp();
-        void restart();
+        void restartGame();
         void gameover();
 
     private:

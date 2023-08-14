@@ -8,7 +8,8 @@ class Ball : public SDL_Rect
 {
     public:
         static const int RADIUS = 6;
-        static const int INIT_MARGIN = 100;
+        static const int INIT_LEFT = 100;
+        static const int INIT_RIGHT = 544;
         static const int INIT_UPPER = 408;
         static const int INIT_SPEED = 3;
         static const int SPEED_STEP = 500;
@@ -19,9 +20,9 @@ class Ball : public SDL_Rect
         int speed;
 
     public:
-        void init(int);
+        void init();
         void move();
-        void speedUp(int);
+        void setLevelUpSpeed(int);
         void setSignX(int);
         void setSignY(int);
         void reflectX();

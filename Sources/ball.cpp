@@ -1,8 +1,8 @@
 #include "ball.h"
 
-void Ball::init(int screenWidth)
+void Ball::init()
 {
-    SDL_Rect::x = rand() % (screenWidth - 2 * INIT_MARGIN) + INIT_MARGIN;
+    SDL_Rect::x = rand() % (INIT_RIGHT - INIT_LEFT) + INIT_LEFT;
     SDL_Rect::y = INIT_UPPER;
     SDL_Rect::w = RADIUS * 2;
     SDL_Rect::h = RADIUS * 2;
@@ -23,7 +23,7 @@ void Ball::move()
     SDL_Rect::y += signY * speed;
 }
 
-void Ball::speedUp(int score)
+void Ball::setLevelUpSpeed(int score)
 {
     speed = INIT_SPEED + score / SPEED_STEP;
 }
