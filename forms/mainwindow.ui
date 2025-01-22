@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>644</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>644</width>
+    <height>480</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>644</width>
+    <height>480</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Bounce Ball</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resources.qrc">
+    <normaloff>:/images/icon.ico</normaloff>:/images/icon.ico</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QStackedWidget" name="mainStackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>644</width>
+      <height>480</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>644</width>
+      <height>480</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>644</width>
+      <height>480</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #FFFFFF;
+background-color: #161616;</string>
+    </property>
+    <widget class="PrepareWidget" name="prepareWidget"/>
+    <widget class="SceneWidget" name="sceneWidget"/>
+    <widget class="FailureWidget" name="failureWidget"/>
+    <widget class="SuccessWidget" name="successWidget"/>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SceneWidget</class>
+   <extends>QWidget</extends>
+   <header>views/widgets/scenewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PrepareWidget</class>
+   <extends>QWidget</extends>
+   <header>views/widgets/preparewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FailureWidget</class>
+   <extends>QWidget</extends>
+   <header>views/widgets/failurewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SuccessWidget</class>
+   <extends>QWidget</extends>
+   <header>views/widgets/successwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
