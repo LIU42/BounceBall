@@ -39,6 +39,6 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
     public:
-        void initializeComponent();
+        void initialize();
 };
 #endif

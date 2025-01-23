@@ -22,7 +22,7 @@ MainWindow::~MainWindow()
     delete frameTimer;
 }
 
-void MainWindow::initializeComponent()
+void MainWindow::initialize()
 {
     gameFramework->initialize();
 
